@@ -3,6 +3,15 @@
 use strict;
 use warnings;
 
+#
+# KONFIGURATION!
+# Hier bei Bedarf Regex anpassen.
+# Der sollte einen Match haben: die IP-Adresse
+# 
+
+my $IP_REGEX = qr{ ^(.*?) \s }x;
+
+
 =head1 NAME
 
  count_age-de.pl - Wie viele Nutzer haben ein anerkanntes "Jugendschutzprogramm" installiert?
@@ -115,6 +124,10 @@ ist es sehr stupide und simpel und nimmt pro Zeile einfach das erste "Wort"
 beliebig anderes sein, sollte aber ungefähr für jeden Nutzer habwegs eindeutig 
 sein.
 
+Der Regex zum Finden der IP-Adresse steht ganz am Anfang als Konstante; das 
+ließe sich natürlich auch als CLI-Parameter definieren, für die drei Zeilen 
+Code habe ich aber gerade keine Lust ... :-)
+
 
 Wer nur zählen möchte, kann dies auch ganz einfach mit grep ohne dieses 
 Programm machen:
@@ -133,6 +146,8 @@ aus dem Cache.
 Die Geschwindigkeit ist auch sehr stark davon abhängig, wie Perl compiliert 
 wurde. Aber auch das dürfte meist immer noch schneller als die Festplatte 
 sein.
+
+  print "#" unless [...]
 
 
 =head1 AUTHOR
