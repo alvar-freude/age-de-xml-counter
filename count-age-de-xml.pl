@@ -62,8 +62,8 @@ gezählt, aber das hat erst bei sehr stark frequentiertern Webseiten eine
 große Auswirkung.
 
 Alle 100000 (hunderttausend) Zeilen gibt das Skript ein # als Statusmeldung 
-aus.
-
+auf STDERR aus (so dass die normalen Ausgaben z.B. in ein File umgeleitet 
+werden können). 
 
 =head2 Ungenauigkeit
 
@@ -176,7 +176,7 @@ while ( my $line = <ARGV> )
    my ($ip) = $line =~ $IP_REGEX;
    $ips{$ip}++;
    $count_age_de++ if $line =~ m{ /age-de\.xml }x;
-   print "#" unless $count_lines++ % 100000;       # Statusbalken; CPU 10% schneller ohne
+   print STDERR "#" unless $count_lines++ % 100000;       # Statusbalken; CPU 10% schneller ohne
    }
 
 print "\n";
