@@ -18,7 +18,7 @@ my $IP_REGEX = qr{ ^(.*?) \s }x;
 
 =head1 VERSION
 
-Version 1.1
+Version 1.2
 
 =head1 SYNOPSIS
 
@@ -118,7 +118,8 @@ der Gesamtzugriffe verantwortlich sind.
 
 =head2 Update Version 1.2 (Mai 2019)
 
-Veröffentlichung auf GitHub. Pull-Requests nehme ich natürlich gerne an.
+Veröffentlichung auf GitHub (Pull-Requests nehme ich natürlich gerne an!), 
+kleine Änderungen.
 
 
 =head2 Logfile-Format
