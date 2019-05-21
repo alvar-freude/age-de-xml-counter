@@ -158,7 +158,7 @@ print "Zaehle die Zugriffe auf age-de.xml und IP-Adressen, alle 100000 Zeilen gi
 
 while ( my $line = <ARGV> )
    {
-   my ($ip) = $line =~ m{ \w+\s+(.*?) \s }x;
+   my ($ip) = $line =~ m{ ^(.*?) \s }x;
    $ips{$ip}++;
    $count_age_de++ if $line =~ m{ /age-de\.xml }x;
    print "#" unless $count_lines++ % 100000;       # Statusbalken; CPU 10% schneller ohne
