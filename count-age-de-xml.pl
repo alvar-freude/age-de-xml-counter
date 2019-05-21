@@ -14,7 +14,7 @@ my $IP_REGEX = qr{ ^(.*?) \s }x;
 
 =head1 NAME
 
- count_age-de.pl - Wie viele Nutzer haben ein anerkanntes "Jugendschutzprogramm" installiert?
+ count-age-de-xml.pl - Wie viele Nutzer haben ein anerkanntes "Jugendschutzprogramm" installiert?
 
 =head1 VERSION
 
@@ -25,14 +25,14 @@ Version 1.1
 =encoding utf8
 
 Dieses Skript nimmt einen oder mehrere Dateinamen von Logfiles entgegen; 
-alternativ liest es die Eingaben aus STDIN.
+alternativ liest es die Eingaben Unix-typisch aus STDIN.
 
 Beispiele:
 
-  perl count_age-de.pl access_log
-  perl count_age-de.pl 2015-05-*.log
+  perl count-age-de-xml.pl access_log
+  perl count-age-de-xml.pl 2015-05-*.log
   
-  grep my-site 2015-05-2*.log | perl count_age-de.pl 
+  grep my-site 2015-05-2*.log | perl count-age-de-xml.pl 
 
 
 =head1 BESCHREIBUNG
@@ -116,6 +116,11 @@ Außerdem wird ausgegeben, wie viele IPs/Nutzer für mehr als 1, 2 und 5 %
 der Gesamtzugriffe verantwortlich sind. 
 
 
+=head2 Update Version 1.2 (Mai 2019)
+
+Veröffentlichung auf GitHub. Pull-Requests nehme ich natürlich gerne an.
+
+
 =head2 Logfile-Format
 
 Das Skript versteht alle Standard Apache Logfile-Formate. Streng genommen 
@@ -139,15 +144,23 @@ Programm machen:
 
 Die Geschwindigkeit der Verarbeitung ist i.d.R. von der Geschwindigkeit des 
 Massenspeichers (Festplatte) abhängig; der Code ist meist schneller als die 
-Festplatte oder SSD. Selbstkomprimierende Filesysteme wie ZFS helfen. 
-Auf einem Haswell XEON E3-1230 v3 komme ich auf rund 500 MB Logfile/Sekunde, 
-aus dem Cache.
+Festplatte (bei schnellen SSDs heutzutage nicht mehr). Selbstkomprimierende 
+Filesysteme wie ZFS helfen. Auf einem Haswell XEON E3-1230 v3 komme ich auf 
+rund 500 MB Logfile/Sekunde, aus dem Cache.
 
 Die Geschwindigkeit ist auch sehr stark davon abhängig, wie Perl compiliert 
-wurde. Aber auch das dürfte meist immer noch schneller als die Festplatte 
-sein.
+wurde. 
+
+Wem die Geschwindigkeit für goße Logfiles nicht ausreicht, kann mehrere 
+Logfiles in mehreren Prozessen parallel starten; oder den Code auf 
+Multithreading umschreiben ;-)
+
+Wer ein bisschen mehr Performance oder keine Statusmeldunggen haben will, 
+entfernt die Zeile mit 
 
   print "#" unless [...]
+
+Dann gibt es nicht mehr alle 100000 Zeilen ein #.
 
 
 =head1 AUTHOR
