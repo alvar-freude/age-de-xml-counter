@@ -22,6 +22,9 @@ Simple script for counting web requests from users with installed child protecti
 
 More in German.
 
+Siehe auch: L<Hintergrundinfos|https://blog.alvar-freude.de/2015/06/filter-nutzung.html>
+
+
 =head1 NAME
 
  count-age-de-xml.pl - Wie viele Nutzer haben ein anerkanntes "Jugendschutzprogramm" installiert?
