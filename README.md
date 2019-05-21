@@ -1,55 +1,36 @@
-#!/usr/bin/env perl
-
-use strict;
-use warnings;
-
-#
-# KONFIGURATION!
-# Hier bei Bedarf Regex anpassen.
-# Der sollte einen Match haben: die IP-Adresse
-# 
-
-#
-# Build README.md:
-# 
-#   pod2github count-age-de-xml.pl >README.md
-#   (via Pod::Markdown::Github)
-
-my $IP_REGEX = qr{ ^(.*?) \s }x;
-
-=head1 age-de.xml counting script 
+# age-de.xml counting script 
 Simple script for counting web requests from users with installed child protection software, which is approoved in Germany.
 
 More in German.
 
-=head1 NAME
+# NAME
 
- count-age-de-xml.pl - Wie viele Nutzer haben ein anerkanntes "Jugendschutzprogramm" installiert?
+```
+count-age-de-xml.pl - Wie viele Nutzer haben ein anerkanntes "Jugendschutzprogramm" installiert?
+```
 
-=head1 VERSION
+# VERSION
 
 Version 1.2
 
-=head1 SYNOPSIS
-
-=encoding utf8
+# SYNOPSIS
 
 Dieses Skript nimmt einen oder mehrere Dateinamen von Logfiles entgegen; 
 alternativ liest es die Eingaben Unix-typisch aus STDIN.
 
 Beispiele:
 
-  perl count-age-de-xml.pl access_log
-  perl count-age-de-xml.pl 2015-05-*.log
-  
-  grep my-site 2015-05-2*.log | perl count-age-de-xml.pl 
+```perl
+perl count-age-de-xml.pl access_log
+perl count-age-de-xml.pl 2015-05-*.log
 
+grep my-site 2015-05-2*.log | perl count-age-de-xml.pl 
+```
 
-=head1 BESCHREIBUNG
+# BESCHREIBUNG
 
-B<Für Hintergrundinfos siehe den Artikel:> 
-L<Wie viele Nutzer haben „anerkannte Jugendschutzprogramme“?|https://blog.alvar-freude.de/2015/06/filter-nutzung.html>
-
+**Für Hintergrundinfos siehe den Artikel:** 
+[Wie viele Nutzer haben „anerkannte Jugendschutzprogramme“?](https://blog.alvar-freude.de/2015/06/filter-nutzung.html)
 
 Dieses kleine Sktipt zählt, wie viele Zugriffe auf die Datei age-de.xml in 
 einem Webserver-Access-Log stehen.
@@ -79,7 +60,7 @@ Alle 100000 (hunderttausend) Zeilen gibt das Skript ein # als Statusmeldung
 auf STDERR aus (so dass die normalen Ausgaben z.B. in ein File umgeleitet 
 werden können). 
 
-=head2 Ungenauigkeit
+## Ungenauigkeit
 
 Dieses Skript ist sehr simpel und stupide. Es zählt alles, was im Server-Log 
 steht -- und nicht alles sind menschliche Zugriffe. Vor allem selten 
@@ -107,8 +88,7 @@ sehr wenige Nutzer einen Filter installiert, so dass es zwar mathematisch
 aber nicht in der Bewertung einen relevanten Unterschied macht, ob nun 
 0,005% oder 0,05% der Nutzer einen Filter installiert haben.
 
-
-=head2 Update Version 1.1
+## Update Version 1.1
 
 Bei einigen Webseiten gibt es eine relevante Anzahl an Zugriffen, bei 
 denen von einer IP-Adresse (o.ä.) nur ein einziger Zugriff gemacht wird. 
@@ -129,14 +109,12 @@ der Seite vorzeitig abgebrochen haben.
 Außerdem wird ausgegeben, wie viele IPs/Nutzer für mehr als 1, 2 und 5 % 
 der Gesamtzugriffe verantwortlich sind. 
 
-
-=head2 Update Version 1.2 (Mai 2019)
+## Update Version 1.2 (Mai 2019)
 
 Veröffentlichung auf GitHub (Pull-Requests nehme ich natürlich gerne an!), 
 kleine Änderungen.
 
-
-=head2 Logfile-Format
+## Logfile-Format
 
 Das Skript versteht alle Standard Apache Logfile-Formate. Streng genommen 
 ist es sehr stupide und simpel und nimmt pro Zeile einfach das erste "Wort" 
@@ -148,14 +126,14 @@ Der Regex zum Finden der IP-Adresse steht ganz am Anfang als Konstante; das
 ließe sich natürlich auch als CLI-Parameter definieren, für die drei Zeilen 
 Code habe ich aber gerade keine Lust ... :-)
 
-
 Wer nur zählen möchte, kann dies auch ganz einfach mit grep ohne dieses 
 Programm machen:
 
-  grep -c age-de.xml logfile.log
+```
+grep -c age-de.xml logfile.log
+```
 
-
-=head2 Geschwindigkeit
+## Geschwindigkeit
 
 Die Geschwindigkeit der Verarbeitung ist i.d.R. von der Geschwindigkeit des 
 Massenspeichers (Festplatte) abhängig; der Code ist meist schneller als die 
@@ -173,81 +151,19 @@ Multithreading umschreiben ;-)
 Wer ein bisschen mehr Performance oder keine Statusmeldunggen haben will, 
 entfernt die Zeile mit 
 
-  print "#" unless [...]
+```
+print "#" unless [...]
+```
 
 Dann gibt es nicht mehr alle 100000 Zeilen ein #.
 
+# AUTHOR
 
-=head1 AUTHOR
+```
+Alvar C.H. Freude
+http://alvar.a-blast.org/
+http://blog.alvar-freude.de/
+alvar@a-blast.org
 
-  Alvar C.H. Freude
-  http://alvar.a-blast.org/
-  http://blog.alvar-freude.de/
-  alvar@a-blast.org
-  
-  http://ak-zensur.de/
-
-=cut
-
-use English qw( -no_match_vars );
-
-$OUTPUT_AUTOFLUSH = 1;
-
-my %ips;
-my $count_age_de = 0;
-my $count_lines  = 0;
-
-print "Zaehle die Zugriffe auf age-de.xml und IP-Adressen, alle 100000 Zeilen gibt es ein #\n\n";
-
-while ( my $line = <ARGV> )
-   {
-   my ($ip) = $line =~ $IP_REGEX;
-   $ips{$ip}++;
-   $count_age_de++ if $line =~ m{ /age-de\.xml }x;
-   print STDERR "#" unless $count_lines++ % 100000;       # Statusbalken; CPU 10% schneller ohne
-   }
-
-print "\n";
-
-my $count_ips = scalar keys %ips;
-print "versch. IPs:    $count_ips\n";
-print "Age-DE:         $count_age_de\n";
-printf "Das sind:       %7.5f%% der IPs\n", ( $count_age_de / $count_ips ) * 100;
-print "Alle Zugriffe:  $count_lines\n\n";
-
-
-my ( $eins, $drei, $fuenf, $zehn, $zwanzig, $top5p, $top2p, $top1p );
-$eins = $drei = $fuenf = $zehn = $zwanzig = $top5p = $top2p = $top1p = 0;
-
-my $top5p_limit = int( $count_lines * 0.05 );
-my $top2p_limit = int( $count_lines * 0.02 );
-my $top1p_limit = int( $count_lines * 0.01 );
-
-# Das hier ließe sich deutlich optimieren, wenn nur die möglichen Abfragen
-# bleiben (nur was über 10 ist, kann über 20 sein)
-# So ist es aber übersichtlicher (als mehrfach verschachtelte if-Blöcke) und
-# in der Regel sowieso schnell genug
-foreach my $ip ( keys %ips )
-   {
-   $eins++    if $ips{$ip} == 1;
-   $drei++    if $ips{$ip} >= 3;
-   $fuenf++   if $ips{$ip} >= 5;
-   $zehn++    if $ips{$ip} >= 10;
-   $zwanzig++ if $ips{$ip} >= 20;
-   $top5p++   if $ips{$ip} >= $top5p_limit;
-   $top2p++   if $ips{$ip} >= $top2p_limit;
-   $top1p++   if $ips{$ip} >= $top1p_limit;
-   }
-
-print "IPs mit 1 Hit:  $eins\n";
-print "IPs ab 3 Hits:  $drei\n";
-print "IPs ab 5 Hits:  $fuenf\n";
-print "IPs ab 10 Hits: $zehn\n";
-print "IPs ab 20 Hits: $zwanzig\n";
-print "IPs in Top 5%:  $top5p (ab $top5p_limit Hits)\n";
-print "IPs in Top 2%:  $top5p (ab $top2p_limit Hits)\n";
-print "IPs in Top 1%:  $top1p (ab $top1p_limit Hits)\n";
-
-
-print "\nHinweis: Je nach Randbedingung kann eine IP-Adresse mehr oder weniger einen Nutzer darstellen\n\n";
-
+http://ak-zensur.de/
+```
